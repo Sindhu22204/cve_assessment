@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CVE List</title>
+    <style>
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; text-align: left; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <h1>CVE List</h1>
+    <table id="cve-table">
+        <thead>
+            <tr>
+                <th>CVE ID</th>
+                <th>Description</th>
+                <th>Base Score</th>
+                <th>Last Modified</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        // Fetching CVE data from backend
+        async function fetchCveData() {
+            try {
+                const response = await fetch('http://localhost:3000/cves');
+                const data = await response.json();
+                console.log("Data received from server:", data);  // Debug log
+
+                // Injecting data into the table
+                const tableBody = document.querySelector('#cve-table tbody');
+                tableBody.innerHTML = '';  // Clear any existing rows
+                data.forEach(cve => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${cve.cve_id}</td>
+                        <td>${cve.description || 'No description'}</td>
+                        <td>${cve.base_score_v2 || 'N/A'}</td>
+                        <td>${new Date(cve.last_modified_date).toLocaleDateString()}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error("Error fetching CVE data:", error);  // Debug log
+            }
+        }
+
+        // Fetch and display the data
+        fetchCveData();
+    </script>
+</body>
+</html>
